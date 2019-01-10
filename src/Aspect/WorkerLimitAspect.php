@@ -37,13 +37,13 @@ class WorkerLimitAspect
         if(null === $blockingConsumer)
         {
             $result = WorkerLimiter::call(function() use($joinPoint){
-                $joinPoint->proceed();
+                return $joinPoint->proceed();
             }, $workerLimit->name, $workerLimit->max, $workerLimit->timeout, $workerLimit->callback, $workerLimit->poolName);
         }
         else
         {
             $result = WorkerLimiter::callBlock(function() use($joinPoint){
-                $joinPoint->proceed();
+                return $joinPoint->proceed();
             }, $workerLimit->name, $workerLimit->max, $workerLimit->timeout, $blockingConsumer->timeout, $workerLimit->callback, $workerLimit->poolName);
         }
         return $result;
