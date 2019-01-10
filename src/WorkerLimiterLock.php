@@ -74,7 +74,7 @@ SCRIPT
         $numKeys = 1;
         return PoolManager::use($poolName ?? RedisManager::getDefaultPoolName(), function($resource, RedisHandler $redis) use($args, $numKeys){
             $redis->clearLastError();
-            $result = $redis->eval(<<<SCRIPT
+            $result = $redis->evalEx(<<<SCRIPT
 local name = KEYS[1]
 local id = ARGV[1]
 local timeoutKey = name .. ':timeout'
