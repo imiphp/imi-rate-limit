@@ -42,7 +42,7 @@ abstract class WorkerLimiter
         // 执行任务
         $result = $callable();
         // 释放
-        WorkerLimiterLock::unlock($name, $workerId);
+        WorkerLimiterLock::unlock($name, $workerId, $poolName);
         return $result;
     }
 
@@ -98,7 +98,7 @@ abstract class WorkerLimiter
             // 执行任务
             $result = $callable();
             // 释放
-            WorkerLimiterLock::unlock($name, $workerId);
+            WorkerLimiterLock::unlock($name, $workerId, $poolName);
             return $result;
         } while(true);
     }
