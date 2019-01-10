@@ -24,7 +24,7 @@ abstract class RateLimiter
      * @param string $unit 单位时间，默认为：秒(second)，支持：microsecond、millisecond、second、minute、hour、day、week、month、year
      * @param integer $deduct 每次扣除数量，默认为1
      * @param string $poolName 连接池名称，留空取默认 redis 连接池
-     * @return void
+     * @return mixed
      */
     public static function limit($name, $capacity, $callback = null, $fill = null, $unit = 'second', $deduct = 1, $poolName = null)
     {
@@ -64,7 +64,7 @@ abstract class RateLimiter
      * @param string $unit 单位时间，默认为：秒(second)，支持：microsecond、millisecond、second、minute、hour、day、week、month、year
      * @param integer $deduct 每次扣除数量，默认为1
      * @param string $poolName 连接池名称，留空取默认 redis 连接池
-     * @return void
+     * @return mixed
      */
     public static function limitBlock($name, $capacity, $callback = null, $blockingTimeout = null, $fill = null, $unit = 'second', $deduct = 1, $poolName = null)
     {
