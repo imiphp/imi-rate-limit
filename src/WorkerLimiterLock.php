@@ -33,7 +33,7 @@ for key, value in pairs(kv) do
     redis.call('zrem', timeoutKey, value)
 end
 local num = redis.call('get', name)
-if(num < '0')
+if(num ~= false and num < '0')
 then
     redis.call('del', name)
 end
