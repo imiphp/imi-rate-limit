@@ -36,12 +36,13 @@ final class ImiRedisStorage implements Storage, GlobalScope
      *
      * @param string $name  The resource name.
      * @param \Imi\Redis\RedisHandler  $redis The Redis API.
+     * @param int $timeout
      */
-    public function __construct($name, \Imi\Redis\RedisHandler $redis)
+    public function __construct($name, \Imi\Redis\RedisHandler $redis, int $timeout = 3)
     {
         $this->key   = $name;
         $this->redis = $redis;
-        $this->mutex = new PHPRedisMutex([$redis], $name);
+        $this->mutex = new PHPRedisMutex([$redis], $name, $timeout);
     }
     
     public function bootstrap($microtime)

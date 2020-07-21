@@ -72,7 +72,7 @@ abstract class RateLimiter
         {
             $fill = $capacity;
         }
-        $storage = new ImiRedisStorage($name, RedisManager::getInstance($poolName));
+        $storage = new ImiRedisStorage($name, RedisManager::getInstance($poolName), $blockingTimeout);
         $rate    = new Rate($fill, $unit);
         $bucket  = new TokenBucket($capacity, $rate, $storage);
         $bucket->bootstrap($capacity);
