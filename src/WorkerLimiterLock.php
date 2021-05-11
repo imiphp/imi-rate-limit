@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Imi\RateLimit;
 
 use Imi\Pool\PoolManager;
@@ -9,14 +11,9 @@ use Imi\Redis\RedisManager;
 abstract class WorkerLimiterLock
 {
     /**
-     * @param string      $name
-     * @param int         $max
-     * @param float|null  $timeout
-     * @param string|null $poolName
-     *
      * @return mixed
      */
-    public static function lock($name, $max, $timeout, $poolName = null)
+    public static function lock(string $name, int $max, ?float $timeout, ?string $poolName = null)
     {
         $now = microtime(true);
         $args = [
@@ -76,13 +73,9 @@ SCRIPT
     }
 
     /**
-     * @param string      $name
-     * @param int         $workerId
-     * @param string|null $poolName
-     *
      * @return mixed
      */
-    public static function unlock($name, $workerId, $poolName = null)
+    public static function unlock(string $name, int $workerId, ?string $poolName = null)
     {
         $args = [
             '{' . $name . '}',     // 名称

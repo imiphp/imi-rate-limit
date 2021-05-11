@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Imi\RateLimit\Annotation;
 
 use Imi\Bean\Annotation\Base;
@@ -13,7 +15,10 @@ use Imi\Bean\Annotation\Parser;
  * @Annotation
  * @Target("METHOD")
  * @Parser("\Imi\Bean\Parser\NullParser")
+ *
+ * @property int|null $timeout 超时时间，单位：秒；为 null 不限制
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 class BlockingConsumer extends Base
 {
     /**
@@ -21,14 +26,10 @@ class BlockingConsumer extends Base
      *
      * @var string
      */
-    protected $defaultFieldName = 'timeout';
+    protected ?string $defaultFieldName = 'timeout';
 
-    /**
-     * 超时时间，单位：秒.
-     *
-     * 为 null 不限制
-     *
-     * @var int|null
-     */
-    public $timeout;
+    public function __construct(?array $__data = null, ?int $timeout)
+    {
+        parent::__construct(...\func_get_args());
+    }
 }

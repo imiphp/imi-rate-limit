@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Imi\RateLimit\Storage;
 
 use bandwidthThrottle\tokenBucket\storage\scope\GlobalScope;
 use bandwidthThrottle\tokenBucket\storage\Storage;
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use bandwidthThrottle\tokenBucket\util\DoublePacker;
+use Imi\Redis\RedisHandler;
 use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
 
@@ -16,24 +19,18 @@ final class ImiRedisStorage implements Storage, GlobalScope
 {
     /**
      * The mutex.
-     *
-     * @var PHPRedisMutex
      */
-    private $mutex;
+    private PHPRedisMutex $mutex;
 
     /**
      * The redis API.
-     *
-     * @var \Imi\Redis\RedisHandler
      */
-    private $redis;
+    private RedisHandler $redis;
 
     /**
      * The key.
-     *
-     * @var string
      */
-    private $key;
+    private string $key;
 
     /**
      * Sets the connected Redis API.
@@ -41,11 +38,10 @@ final class ImiRedisStorage implements Storage, GlobalScope
      * The Redis API needs to be connected yet. I.e. Redis::connect() was
      * called already.
      *
-     * @param string                  $name    the resource name
-     * @param \Imi\Redis\RedisHandler $redis   the Redis API
-     * @param int                     $timeout
+     * @param string                  $name  the resource name
+     * @param \Imi\Redis\RedisHandler $redis the Redis API
      */
-    public function __construct($name, \Imi\Redis\RedisHandler $redis, int $timeout = 3)
+    public function __construct(string $name, RedisHandler $redis, int $timeout = 3)
     {
         $this->key = $name;
         $this->redis = $redis;
