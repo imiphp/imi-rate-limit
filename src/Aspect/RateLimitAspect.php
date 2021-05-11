@@ -24,11 +24,12 @@ class RateLimitAspect
      * 处理限流
      *
      * @PointCut(
-     *         type=PointCutType::ANNOTATION,
-     *         allow={
-     *             RateLimit::class
-     *         }
+     *     type=PointCutType::ANNOTATION,
+     *     allow={
+     *         RateLimit::class
+     *     }
      * )
+     *
      * @Around
      *
      * @return mixed
@@ -37,10 +38,14 @@ class RateLimitAspect
     {
         $className = BeanFactory::getObjectClass($joinPoint->getTarget());
         $method = $joinPoint->getMethod();
+        $annotations = AnnotationManager::getMethodAnnotations($className, $method, [
+            RateLimit::class,
+            BlockingConsumer::class,
+        ], true, true);
         /** @var RateLimit|null $rateLimit */
-        $rateLimit = AnnotationManager::getMethodAnnotations($className, $method, RateLimit::class)[0] ?? null;
+        $rateLimit = $annotations[RateLimit::class];
         /** @var BlockingConsumer|null $blockingConsumer */
-        $blockingConsumer = AnnotationManager::getMethodAnnotations($className, $method, BlockingConsumer::class)[0] ?? null;
+        $blockingConsumer = $annotations[BlockingConsumer::class];
         if (null === $blockingConsumer)
         {
             $result = RateLimiter::limit($rateLimit->name, $rateLimit->capacity, $rateLimit->callback, $rateLimit->fill, $rateLimit->unit, $rateLimit->deduct, $rateLimit->poolName);

@@ -8,8 +8,10 @@ use Imi\Pool\PoolManager;
 use Imi\Redis\RedisHandler;
 use Imi\Redis\RedisManager;
 
-abstract class WorkerLimiterLock
+class WorkerLimiterLock
 {
+    use \Imi\Util\Traits\TStaticClass;
+
     /**
      * @return mixed
      */
@@ -62,7 +64,7 @@ abstract class WorkerLimiterLock
             end
             return id
             SCRIPT, $args, $numKeys);
-            if (!$result && '' !== ($error = $redis->getLastError()))
+            if (!$result && null !== ($error = $redis->getLastError()))
             {
                 throw new \RuntimeException($error);
             }
@@ -96,7 +98,7 @@ abstract class WorkerLimiterLock
             end
             return false
             SCRIPT, $args, $numKeys);
-            if (!$result && '' !== ($error = $redis->getLastError()))
+            if (!$result && null !== ($error = $redis->getLastError()))
             {
                 throw new \RuntimeException($error);
             }

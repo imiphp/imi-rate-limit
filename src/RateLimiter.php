@@ -15,8 +15,10 @@ use Imi\Redis\RedisManager;
 /**
  * 限流器手动调用类.
  */
-abstract class RateLimiter
+class RateLimiter
 {
+    use \Imi\Util\Traits\TStaticClass;
+
     /**
      * 限流
      *
@@ -99,6 +101,25 @@ abstract class RateLimiter
                 return static::defaultCallback($name);
             }
         }
+    }
+
+    /**
+     * 获取可用数量.
+     *
+     * @param string      $name     限流器名称
+     * @param int         $capacity 总容量
+     * @param int|null    $fill     单位时间内生成填充的数量，不设置或为null时，默认值与 $capacity 相同
+     * @param string      $unit     单位时间，默认为：秒(second)，支持：microsecond、millisecond、second、minute、hour、day、week、month、year
+     * @param string|null $poolName 连接池名称，留空取默认 redis 连接池
+     */
+    public static function getTokens(string $name, int $capacity, ?int $fill = null, string $unit = 'second', ?string $poolName = null): int
+    {
+        $storage = new ImiRedisStorage($name, RedisManager::getInstance($poolName));
+        $rate = new Rate($fill ?? $capacity, $unit);
+        $bucket = new TokenBucket($capacity, $rate, $storage);
+        $bucket->bootstrap($capacity);
+
+        return $bucket->getTokens();
     }
 
     /**
