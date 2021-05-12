@@ -6,12 +6,10 @@
     "require": {
         "bandwidth-throttle/token-bucket": "^2.0"
     },
-    "require-dev": {
-        "yurunsoft/imi": "dev-dev"
-    },
+    "require-dev": {},
     "autoload": {
-        "psr-4" : {
-            "Imi\\RateLimit\\" : "src/"
+        "psr-4": {
+            "Imi\\RateLimit\\": "src/"
         }
     }
 }

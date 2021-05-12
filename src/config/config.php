@@ -1,6 +1,7 @@
 <?php
+
 return [
-    'beanScan'  =>  [
+    'beanScan'  => [
         'Imi\RateLimit\Annotation',
         'Imi\RateLimit\Aspect',
     ],
