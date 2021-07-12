@@ -1,13 +1,21 @@
 <?php
+
 namespace Imi\RateLimit;
 
-use Imi\Redis\RedisHandler;
 use Imi\Pool\PoolManager;
+use Imi\Redis\RedisHandler;
 use Imi\Redis\RedisManager;
-
 
 abstract class WorkerLimiterLock
 {
+    /**
+     * @param string      $name
+     * @param int         $max
+     * @param float|null  $timeout
+     * @param string|null $poolName
+     *
+     * @return mixed
+     */
     public static function lock($name, $max, $timeout, $poolName = null)
     {
         $now = microtime(true);
@@ -18,7 +26,8 @@ abstract class WorkerLimiterLock
             null === $timeout ? null : ($now + $timeout), // 过期时间
         ];
         $numKeys = 1;
-        return PoolManager::use($poolName ?? RedisManager::getDefaultPoolName(), function($resource, RedisHandler $redis) use($args, $numKeys){
+
+        return PoolManager::use($poolName ?? RedisManager::getDefaultPoolName(), function ($resource, RedisHandler $redis) use ($args, $numKeys) {
             $redis->clearLastError();
             $result = $redis->evalEx(<<<SCRIPT
 local name = KEYS[1]
@@ -57,14 +66,22 @@ end
 return id
 SCRIPT
             , $args, $numKeys);
-            if(!$result && '' !== ($error = $redis->getLastError()))
+            if (!$result && '' !== ($error = $redis->getLastError()))
             {
                 throw new \RuntimeException($error);
             }
+
             return $result;
         });
     }
 
+    /**
+     * @param string      $name
+     * @param int         $workerId
+     * @param string|null $poolName
+     *
+     * @return mixed
+     */
     public static function unlock($name, $workerId, $poolName = null)
     {
         $args = [
@@ -72,7 +89,8 @@ SCRIPT
             $workerId, // 任务ID
         ];
         $numKeys = 1;
-        return PoolManager::use($poolName ?? RedisManager::getDefaultPoolName(), function($resource, RedisHandler $redis) use($args, $numKeys){
+
+        return PoolManager::use($poolName ?? RedisManager::getDefaultPoolName(), function ($resource, RedisHandler $redis) use ($args, $numKeys) {
             $redis->clearLastError();
             $result = $redis->evalEx(<<<SCRIPT
 local name = KEYS[1]
@@ -87,10 +105,11 @@ end
 return false
 SCRIPT
 , $args, $numKeys);
-            if(!$result && '' !== ($error = $redis->getLastError()))
+            if (!$result && '' !== ($error = $redis->getLastError()))
             {
                 throw new \RuntimeException($error);
             }
+
             return $result;
         });
     }
